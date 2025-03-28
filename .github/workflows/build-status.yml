@@ -1,0 +1,30 @@
+name: Build Status
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-status:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+        with:
+          bun-version: 1.2.6
+
+      - name: Install Bun dependencies
+        run: bun install
+
+      - name: Lint project files
+        run: bun run lint
+
+      - name: Run tests
+        run: bun test

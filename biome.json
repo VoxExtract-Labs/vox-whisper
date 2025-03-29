@@ -8,7 +8,7 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "ignore": ["node_modules/", "coverage/", "dist/"]
+        "ignore": ["node_modules/", "coverage/", "dist/", "docs-site"]
     },
     "formatter": {
         "enabled": true,

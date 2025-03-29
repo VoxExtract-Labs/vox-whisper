@@ -1,0 +1,8 @@
+{
+    "entryPoints": ["src"],
+    "tsconfig": "tsconfig.docs.json",
+    "out": "docs-site/docs/api",
+    "plugin": ["typedoc-plugin-markdown"],
+    "readme": "none",
+    "includeVersion": true
+}

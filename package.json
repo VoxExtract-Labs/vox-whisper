@@ -32,6 +32,8 @@
         "build": "bun run build:dist && bun run build:types",
         "build:dist": "bun run build.ts",
         "build:types": "tsc -p tsconfig.types.json",
+        "docs:api": "typedoc",
+        "deploy": "docusaurus deploy",
         "prepare": "if [ \"$CI\" = \"true\" ]; then echo 'CI detected: skipping lefthook install'; else bunx lefthook install; fi"
     },
     "devDependencies": {
@@ -39,7 +41,9 @@
         "@commitlint/cli": "^19.8.0",
         "@commitlint/config-conventional": "^19.8.0",
         "@types/bun": "latest",
-        "lefthook": "^1.11.3"
+        "lefthook": "^1.11.3",
+        "typedoc": "^0.28.1",
+        "typedoc-plugin-markdown": "^4.6.0"
     },
     "peerDependencies": {
         "typescript": "^5.0.0"

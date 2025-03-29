@@ -1,1 +1,2 @@
-export const initialized = true;
+export type { WhisperConfig } from './WhisperConfig.ts';
+export { whisperTranscribe } from './whisperTranscribe.ts';

@@ -39,15 +39,13 @@ export async function whisperTranscribe(config: WhisperConfig): Promise<string> 
         throw new WhisperError(`Input file not found or inaccessible: ${resolvedInputPath}`, err as Error);
     }
 
-    // Ensure the output directory exists and update its permissions.
+    // Ensure the output directory exists.
     const outputDir = path.dirname(resolvedOutputPath);
     try {
         await fs.access(outputDir);
-        // Adjust permissions if needed.
-        await fs.chmod(outputDir, 0o777);
     } catch {
-        // Create the directory with broad permissions.
-        await fs.mkdir(outputDir, { recursive: true, mode: 0o777 });
+        // If the directory doesn't exist, create it with default permissions.
+        await fs.mkdir(outputDir, { recursive: true });
     }
 
     // Ensure the Docker image exists locally; if not, pull it.

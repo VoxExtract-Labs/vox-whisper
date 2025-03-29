@@ -28,7 +28,7 @@
         "tree": "tree -I node_modules .",
         "lint": "bun biome check",
         "lint:fix": "bun biome check --write",
-        "coverage": "bun test --coverage --coverage-reporter=lcov",
+        "coverage": "bun test --coverage --coverage-reporter=lcov --coverage-reporter=text",
         "build": "bun run build:dist && bun run build:types",
         "build:dist": "bun run build.ts",
         "build:types": "tsc -p tsconfig.types.json",
@@ -49,6 +49,6 @@
         "bun": ">=1.0"
     },
     "dependencies": {
-        "execa": "^9.5.2"
+        "execa": "^8.0.1"
     }
 }

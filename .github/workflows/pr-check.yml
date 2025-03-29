@@ -26,6 +26,9 @@ jobs:
       - name: Lint project files
         run: bun run lint
 
+      - name: Ensure tmp directory is writable
+        run: chmod -R 777 tmp/
+
       - name: Run tests with coverage
         run: bun run coverage
 

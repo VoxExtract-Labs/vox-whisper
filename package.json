@@ -49,6 +49,6 @@
         "bun": ">=1.0"
     },
     "dependencies": {
-        "execa": "8.0.1"
+        "execa": "^8.0.1"
     }
 }

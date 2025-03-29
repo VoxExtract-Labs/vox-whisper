@@ -1,6 +1,6 @@
 // src/whisperTranscribe.ts
 
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { WhisperConfig } from '@/WhisperConfig.js';
 import { WhisperError } from '@/WhisperError.ts';
@@ -12,7 +12,7 @@ import { execa } from 'execa';
  *
  * @param config - Configuration options for transcription.
  * @returns A promise that resolves to the transcription result (stdout).
- * @throws {WhisperError} If required configuration options are missing, if the input file does not exist, or if the Docker command fails.
+ * @throws {WhisperError} If required configuration options are missing, if the input file is inaccessible, or if the Docker command fails.
  */
 export async function whisperTranscribe(config: WhisperConfig): Promise<string> {
     if (!config.input) {
@@ -32,9 +32,22 @@ export async function whisperTranscribe(config: WhisperConfig): Promise<string> 
     const resolvedInputPath = path.resolve(config.input);
     const resolvedOutputPath = path.resolve(config.output);
 
-    // Check if the input file exists; if not, throw an error with a clear message.
-    if (!fs.existsSync(resolvedInputPath)) {
-        throw new WhisperError(`Input file not found: ${resolvedInputPath}`);
+    // Asynchronously check if the input file exists.
+    try {
+        await fs.access(resolvedInputPath);
+    } catch (err: unknown) {
+        throw new WhisperError(`Input file not found or inaccessible: ${resolvedInputPath}`, err as Error);
+    }
+
+    // Ensure the output directory exists and update its permissions.
+    const outputDir = path.dirname(resolvedOutputPath);
+    try {
+        await fs.access(outputDir);
+        // Adjust permissions if needed.
+        await fs.chmod(outputDir, 0o777);
+    } catch {
+        // Create the directory with broad permissions.
+        await fs.mkdir(outputDir, { recursive: true, mode: 0o777 });
     }
 
     // Ensure the Docker image exists locally; if not, pull it.
@@ -50,28 +63,22 @@ export async function whisperTranscribe(config: WhisperConfig): Promise<string> 
     }
 
     const inputDir = path.dirname(resolvedInputPath);
-    const outputDir = path.dirname(resolvedOutputPath);
-    const inputFileName = path.basename(resolvedInputPath);
     const outputFileName = path.basename(resolvedOutputPath);
+    const inputFileName = path.basename(resolvedInputPath);
 
-    // Construct Docker command arguments
+    // Construct Docker command arguments.
     const dockerArgs: string[] = ['run', '--rm'];
     if (config.device === 'cuda') {
         dockerArgs.push('--gpus', 'all');
     }
-
-    // Mount the input and output directories
     dockerArgs.push('-v', `${inputDir}:/app/audio`);
     dockerArgs.push('-v', `${outputDir}:/app/output`);
-
-    // Specify the Docker image
     dockerArgs.push(config.dockerImage);
 
-    // Construct the CLI arguments for the container
+    // Construct the CLI arguments for the container.
     const cliArgs: string[] = [];
     cliArgs.push('--input', `/app/audio/${inputFileName}`);
     cliArgs.push('--output', `/app/output/${outputFileName}`);
-
     if (config.model) {
         cliArgs.push('--model', config.model);
     }
@@ -94,7 +101,6 @@ export async function whisperTranscribe(config: WhisperConfig): Promise<string> 
         cliArgs.push('--verbose');
     }
 
-    // Combine Docker and CLI arguments
     const fullArgs = dockerArgs.concat(cliArgs);
 
     try {

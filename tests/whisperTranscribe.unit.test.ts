@@ -1,7 +1,7 @@
 // tests/whisperTranscribe.unit.test.ts
 
-import { afterAll, describe, expect, it, jest, mock, spyOn } from 'bun:test';
-import fs from 'node:fs';
+import { afterAll, describe, expect, it, mock, spyOn } from 'bun:test';
+import fs from 'node:fs/promises';
 import type { WhisperConfig } from '@/WhisperConfig.ts';
 import { WhisperError } from '@/WhisperError.ts';
 import { whisperTranscribe } from '@/whisperTranscribe.ts';
@@ -83,10 +83,10 @@ describe('whisperTranscribe Unit Tests', () => {
                 language: 'en',
             };
 
-            // Temporarily override fs.existsSync to simulate that the file does not exist.
-            spyOn(fs, 'existsSync').mockReturnValueOnce(false);
-            expect(whisperTranscribe(config)).rejects.toThrowError(
-                new RegExp(`Input file not found: ${nonExistentInput}`),
+            // Simulate that the file is inaccessible by having fs.access reject.
+            spyOn(fs, 'access').mockRejectedValueOnce(new Error('File not found'));
+            await expect(whisperTranscribe(config)).rejects.toThrowError(
+                new RegExp(`Input file not found or inaccessible: ${nonExistentInput}`),
             );
         });
     });

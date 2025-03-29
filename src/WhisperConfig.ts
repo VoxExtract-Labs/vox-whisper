@@ -13,9 +13,16 @@ interface WhisperConfigBase {
      */
     output: string;
     /**
-     * Model size: tiny, base, small, medium, large-*
+     * Model size to use. Although this is typed as a string, recommended values include:
+     * - 'tiny'
+     * - 'base'
+     * - 'small'
+     * - 'medium'
+     * - 'large-*' (e.g., 'large-v1', 'large-v2')
+     *
+     * Additionally, any valid model identifier (including HuggingFace models) is allowed.
      */
-    model?: 'tiny' | 'base' | 'small' | 'medium' | string;
+    model?: string;
     /**
      * Inference device: 'cpu' or 'cuda' (required).
      */

@@ -8,6 +8,10 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write        # allow pushing tags
+      issues: write          # allow creating GitHub issues
+      pull-requests: write   # (optional) for PR comments on releases
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

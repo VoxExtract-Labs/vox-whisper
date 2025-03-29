@@ -12,7 +12,7 @@
     "keywords": ["whisper", "docker", "transcription", "node", "typescript"],
     "repository": {
         "type": "git",
-        "url": "https://github.com/VoxExtract-Labs/vox-whisper.git"
+        "url": "git+https://github.com/VoxExtract-Labs/vox-whisper.git"
     },
     "bugs": {
         "url": "https://github.com/VoxExtract-Labs/vox-whisper/issues"
@@ -56,5 +56,8 @@
     },
     "dependencies": {
         "execa": "^8.0.1"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

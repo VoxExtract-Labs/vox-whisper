@@ -45,7 +45,7 @@ export async function whisperTranscribe(config: WhisperConfig): Promise<string> 
         await fs.access(outputDir);
     } catch {
         // If the directory doesn't exist, create it with default permissions.
-        await fs.mkdir(outputDir, { recursive: true });
+        await fs.mkdir(path.resolve(`${outputDir}`), { recursive: true });
     }
 
     // Ensure the Docker image exists locally; if not, pull it.
